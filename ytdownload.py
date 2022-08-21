@@ -5,6 +5,7 @@ import sys
 import os
 
 url = ""
+dir = ""
 itag = ""
 file_name = ""
 audio_only = None # Mp3 (True) or Mp4 (False)
@@ -15,12 +16,13 @@ def help_command():
 
 * = required
 Arguments:
-    - *url = https://www.youtube.com/watch?v= 
-    - audio_only = <bool> | Default = False
-    - itag = <integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
-    - debug = <bool> | Default = False
-    - file_name = str.mp4 | Defualt = defualt_filename 
+    - *url=https://www.youtube.com/watch?v= 
+    - audio_only=<bool> | Default = False
+    - itag=<integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
+    - debug=<bool> | Default = False
+    - file_name=str.mp4 | Defualt = defualt_filename 
             (remember to put .mp4 at the end or .mp3 if audio_only=True)
+    - dir=<string> | Defualt = current directory, example: dir=./Desktop/videos
 
 Commands:
     --help (shows help menu)
@@ -37,7 +39,8 @@ def download_video(
         url: str, 
         audio_only: bool, 
         itag: int, 
-        file_name: str
+        file_name: str,
+        dir: str
     ):
     
     try:
@@ -46,7 +49,7 @@ def download_video(
         error_function(msg="No url/incorrect youtube url. Please try again")
         return
 
-
+    # User input confirmation:
     print(Style.RESET_ALL)
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
 
@@ -71,7 +74,7 @@ def download_video(
 
     # Video downloading, filtering, and file renaming.
     if (itag != ""):
-        yt_video.streams.get_by_itag(itag=itag).download()
+        yt_video.streams.get_by_itag(itag=itag).download(dir)
         print("Video Succesfully downloaded.")
 
         if (file_name != ""):
@@ -79,14 +82,14 @@ def download_video(
             print(f"File renamed to \"{file_name}\"")
         
     elif (audio_only != None):
-        yt_video.streams.filter(audio_only=audio_only).download()
+        yt_video.streams.filter(audio_only=audio_only).download(dir)
 
         if (file_name != ""):
             os.rename(yt_video.streams.filter(audio_only=audio_only).default_filename, file_name)
             print(f"File renamed to \"{file_name}\"")
 
     else:
-        yt_video.streams.get_highest_resolution().download()
+        yt_video.streams.get_highest_resolution().download(dir)
         print("Video Succesfully downloaded.")
 
         if (file_name != ""):
@@ -111,7 +114,8 @@ if __name__ == "__main__":
                 try:
                     arg, result = item.split("=")
 
-                # Becuase Youtube urls have a "=" sign in them we must put a exception for them.
+                # Becuase Youtube urls have a "=" sign in them we must put this in
+                # to handle for them.
                 except ValueError: 
                     try:
                         arg, result, result2 = item.split("=")
@@ -135,6 +139,9 @@ if __name__ == "__main__":
                 elif (arg.lower() == "file_name"):
                     file_name = result
                 
+                elif (arg.lower() == "dir"):
+                    dir = result
+                
                 else:
                     error_function(msg=f"{arg} is unknown, do --help for all arguments and commands.")
                 
@@ -142,7 +149,8 @@ if __name__ == "__main__":
                 error_function(msg="You must enter a link, example: url=LINK_HERE")
 
             download_video(url=url, audio_only=audio_only, 
-                           itag=itag, file_name=file_name)
+                           itag=itag, file_name=file_name,
+                           dir=dir)
 
     except IndexError as e:
         error_function(msg=f"Please enter a argument.")
