@@ -10,7 +10,6 @@ file_name = ""
 audio_only = None # Mp3 (True) or Mp4 (False)
 debug = False
 
-
 def help_command():
     print("""List of commands for command ytdownload:
 
@@ -28,6 +27,11 @@ Commands:
     --verison (shows verison)
     --streams [url] """)
 
+def error_function(msg: str):
+    # Resets style (for simplicity), Makes the string "ERROR: " Red
+    # and turns the actually error message back to regular text.
+    print(f"\n{Style.RESET_ALL}{Back.RED}ERROR:{Back.BLACK} {msg}")
+
 
 def download_video(
         url: str, 
@@ -39,9 +43,10 @@ def download_video(
     try:
         yt_video = YouTube(url)
     except Exception:
-        print("ERROR: No url/incorrect youtube url. Please try again")
+        error_function(msg="No url/incorrect youtube url. Please try again")
         return
-    
+
+
     print(Style.RESET_ALL)
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
 
@@ -49,7 +54,7 @@ def download_video(
         print(f"Title: {yt_video.title}\nViews: {yt_video.views:,}")
     except urllib.error.URLError:
         # No internet error handling.
-        print("ERROR: You need internet to use this command.")
+        error_function(msg="You need internet to use this command.")
         return
 
     while True:
@@ -60,10 +65,11 @@ def download_video(
 
         elif (user_input.lower() == "n" or user_input.lower() == "no"):
             print("Cancelling download.")
-            exit()
+            return
         else:
-            print("unknown option. Please try again")
+            error_function(msg="Unknown input, please try again.")
 
+    # Video downloading, filtering, and file renaming.
     if (itag != ""):
         yt_video.streams.get_by_itag(itag=itag).download()
         print("Video Succesfully downloaded.")
@@ -89,6 +95,7 @@ def download_video(
 
 if __name__ == "__main__":
     try:
+        # Command handling
         if (sys.argv[1] == "--help"):
             help_command()
 
@@ -110,7 +117,7 @@ if __name__ == "__main__":
                         arg, result, result2 = item.split("=")
                         result += "=" + result2 
                     except Exception:
-                        print(f"ERROR: Unsupported argument.")
+                        error_function(msg="Unsupported Argument")
 
                 # Argument Handling:
                 if (arg == "url"):
@@ -129,16 +136,16 @@ if __name__ == "__main__":
                     file_name = result
                 
                 else:
-                    print(f"{arg} is unknown, do --help for all arguments.")
+                    error_function(msg=f"{arg} is unknown, do --help for all arguments and commands.")
                 
             if (url == None):
-                print("ERROR: You Must provided a url. url=LINK")
+                error_function(msg="You must enter a link, example: url=LINK_HERE")
 
             download_video(url=url, audio_only=audio_only, 
                            itag=itag, file_name=file_name)
 
     except IndexError as e:
-        print("ERROR: Please enter a argument.")
+        error_function(msg=f"Please enter a argument.")
 
     if (debug == True):
         # Used for debugging purposes.

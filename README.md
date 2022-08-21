@@ -8,7 +8,7 @@ ytdownload is a terminal based way of downloading youtube videos throught the `y
 
 ## Commands
 
-Copy of this in the terminal using the command, `ytdownload --help`.
+A copy of this can be found in the terminal using the command, `ytdownload --help`.
 
 ```text
 * = required
@@ -23,7 +23,7 @@ Arguments:
 Commands:
     --help (shows help menu)
     --verison (shows verison)
-    --streams [url] """)
+    --streams [url]
 ```
 
 ## Example
