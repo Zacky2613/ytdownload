@@ -1,12 +1,13 @@
 from colorama import Fore, Back, Style
 from pytube import YouTube
+import urllib
 import sys
 import os
 
 url = ""
 itag = ""
 file_name = ""
-audio_only = bool # Mp3 (True) or Mp4 (False)
+audio_only = None # Mp3 (True) or Mp4 (False)
 debug = False
 
 
@@ -19,13 +20,13 @@ Arguments:
     - audio_only = <bool> | Default = False
     - itag = <integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
     - debug = <bool> | Default = False
-    - file_name = str.mp4 | Defualt = defualt_filename (remember to put .mp4 at the end.)
+    - file_name = str.mp4 | Defualt = defualt_filename 
+            (remember to put .mp4 at the end or .mp3 if audio_only=True)
 
 Commands:
     --help (shows help menu)
     --verison (shows verison)
-    --streams [url]
-""")
+    --streams [url] """)
 
 
 def download_video(
@@ -43,7 +44,13 @@ def download_video(
     
     print(Style.RESET_ALL)
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
-    print(f"Title: {yt_video.title}\nViews: {yt_video.views:,}")
+
+    try:
+        print(f"Title: {yt_video.title}\nViews: {yt_video.views:,}")
+    except urllib.error.URLError:
+        # No internet error handling.
+        print("ERROR: You need internet to use this command.")
+        return
 
     while True:
         user_input = input("\nConfirm [y/n]: ")
@@ -64,6 +71,14 @@ def download_video(
         if (file_name != ""):
             os.rename(yt_video.streams.get_by_itag(itag=itag).default_filename, file_name)
             print(f"File renamed to \"{file_name}\"")
+        
+    elif (audio_only != None):
+        yt_video.streams.filter(audio_only=audio_only).download()
+
+        if (file_name != ""):
+            os.rename(yt_video.streams.filter(audio_only=audio_only).default_filename, file_name)
+            print(f"File renamed to \"{file_name}\"")
+
     else:
         yt_video.streams.get_highest_resolution().download()
         print("Video Succesfully downloaded.")
