@@ -2,14 +2,32 @@
 
 ytdownload is a terminal based way of downloading youtube videos throught the `ytdownload` command. It is made using python and the pytube module.
 
-if you need help with commands or arguments, do `ytdownload --help`.
-
-# Installation
+## Installation
 
 ...
 
-# Example
+## Commands
 
+Copy of this in the terminal using the command, `ytdownload --help`.
+
+```text
+* = required
+Arguments:
+    - *url = https://www.youtube.com/watch?v= 
+    - audio_only = <bool> | Default = False
+    - itag = <integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
+    - debug = <bool> | Default = False
+    - file_name = str.mp4 | Defualt = defualt_filename 
+            (remember to put .mp4 at the end or .mp3 if audio_only=True)
+
+Commands:
+    --help (shows help menu)
+    --verison (shows verison)
+    --streams [url] """)
 ```
-> ytdownload url=https://www.youtube.com/watch?v=ExwqNreocpg file_name=video.mp4
+
+## Example
+
+```text
+ytdownload url=https://www.youtube.com/watch?v=ExwqNreocpg file_name=video.mp4
 ```
