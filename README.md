@@ -13,12 +13,13 @@ A copy of this can be found in the terminal using the command, `ytdownload --hel
 ```text
 * = required
 Arguments:
-    - *url = https://www.youtube.com/watch?v= 
-    - audio_only = <bool> | Default = False
-    - itag = <integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
-    - debug = <bool> | Default = False
-    - file_name = str.mp4 | Defualt = defualt_filename 
+    - *url=https://www.youtube.com/watch?v= 
+    - audio_only=<bool> | Default = False
+    - itag=<integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
+    - debug=<bool> | Default = False
+    - file_name=str.mp4 | Defualt = defualt_filename 
             (remember to put .mp4 at the end or .mp3 if audio_only=True)
+    - dir=<string> | Defualt = current directory, example: dir=./Desktop/videos
 
 Commands:
     --help (shows help menu)
