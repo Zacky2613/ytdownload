@@ -4,7 +4,7 @@ ytdownload is a terminal based way of downloading youtube videos throught the `y
 
 ## Installation
 
-The following modules will need to be installed for the program to work:
+The following modules will need to be installed for the program to work (if running the .py file):
 
 ```text
 # Linux/macOS
@@ -22,19 +22,18 @@ A copy of this can be found in the terminal using the command, `ytdownload --hel
 
 ```text
 * = required
-Arguments:
-    - *url=https://www.youtube.com/watch?v= 
-    - audio_only=<bool> | Default = False
-    - itag=<integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
-    - debug=<bool> | Default = False
-    - file_name=str.mp4 | Defualt = defualt_filename 
-            (remember to put .mp4 at the end or .mp3 if audio_only=True)
-    - dir=<string> | Defualt = current directory, example: dir=./Desktop/videos
+Options:
+    --version,          - Displays version of ytdownload
+    --help,             - Shows all argument options
+    --streams [url],    - Shows stream information about a url
 
-Commands:
-    --help (shows help menu)
-    --verison (shows verison)
-    --streams [url]
+    *url=YOUTUBE_VIDEO_LINK,    - Youtube video url.
+    audio_only={True|False},    - audio only video (default=false).
+    itag=ITAG,                  - select video using itag (get itag info by using --streams).
+    debug_mode={True|False},    - Shows debugging information.
+    file_name=FILE.mp4,         - change video file name (default=video title).
+    dir=SAVE_DIRECTORY,         - type in a directory for the video to save to (default=current directory).
+    clip=START_AT-END_AT,       - (seconds) example: clip=0-15.5 (defualt=full video).
 ```
 
 ## Example
