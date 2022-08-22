@@ -10,8 +10,8 @@ dir = ""
 itag = ""
 file_name = ""
 audio_only = None # Mp3 (True) or Mp4 (False)
-video_clip = [] 
-debug = False
+video_clip = ["", ""] 
+debug_mode = False
 
 def help_command():
     print("""List of commands for command ytdownload:
@@ -158,8 +158,8 @@ if __name__ == "__main__":
                 elif (arg.lower() == "itag"):
                     itag = result
                 
-                elif (arg.lower() == "debug"):
-                    debug = bool(result)
+                elif (arg.lower() == "debug_mode"):
+                    debug_mode = bool(result)
                 
                 elif (arg.lower() == "file_name"):
                     file_name = result
@@ -196,6 +196,8 @@ if __name__ == "__main__":
     except IndexError as e:
         error_function(msg=f"Please enter a argument.")
 
-    if (debug == True):
+    if (debug_mode == True):
         # Used for debugging purposes.
-        print(f"\n[ DEBUG: ] \nurl={url} \nitag={itag} \naudio_only={audio_only}\nfile_name={file_name}")
+        print(f"\n[ DEBUG: ] \nurl={url} \nitag={itag} \n\
+        audio_only={audio_only}\nfile_name={file_name}\n\
+        clip={video_clip[0]}s-{video_clip[1]}s")
