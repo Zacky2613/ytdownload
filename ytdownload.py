@@ -10,7 +10,7 @@ dir = ""
 itag = ""
 file_name = ""
 audio_only = None # Mp3 (True) or Mp4 (False)
-video_clip = ["", ""] 
+video_clip = [] 
 debug_mode = False
 
 def help_command():
@@ -90,7 +90,7 @@ def download_video(
 
     print("Video Succesfully downloaded.")
 
-    if (file_name != ""):
+    if video_clip:
         try:
             os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
                     dir + file_name)
@@ -199,5 +199,4 @@ if __name__ == "__main__":
     if (debug_mode == True):
         # Used for debugging purposes.
         print(f"\n[ DEBUG: ] \nurl={url} \nitag={itag} \n\
-        audio_only={audio_only}\nfile_name={file_name}\n\
-        clip={video_clip[0]}s-{video_clip[1]}s")
+        audio_only={audio_only}\nfile_name={file_name}\n")
