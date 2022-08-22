@@ -1,4 +1,5 @@
 from colorama import Fore, Back, Style
+from moviepy.editor import * 
 from pytube import YouTube
 import urllib
 import sys
@@ -9,30 +10,31 @@ dir = ""
 itag = ""
 file_name = ""
 audio_only = None # Mp3 (True) or Mp4 (False)
+video_clip = [] 
 debug = False
 
 def help_command():
     print("""List of commands for command ytdownload:
 
 * = required
-Arguments:
-    - *url=https://www.youtube.com/watch?v= 
-    - audio_only=<bool> | Default = False
-    - itag=<integer> | Use --streams [url] for itag information, Defualt = get_highest_resolution()
-    - debug=<bool> | Default = False
-    - file_name=str.mp4 | Defualt = defualt_filename 
-            (remember to put .mp4 at the end or .mp3 if audio_only=True)
-    - dir=<string> | Defualt = current directory, example: dir=./Desktop/videos
+Options:
+    --version,\t\tDisplays version of ytdownload
+    --help,\t\tShows all argument options
+    --streams, [url],\tShows stream information about a url
 
-Commands:
-    --help (shows help menu)
-    --verison (shows verison)
-    --streams [url] """)
+    *url=YOUTUBE_VIDEO_LINK,\t- Youtube video url.
+    audio_only={True|False},\t- audio only video (default=false).
+    itag=ITAG,\t\t\t- select video using itag (get itag info by using --streams).
+    debug_mode={True|False},\t- Shows debugging information.
+    file_name=FILE.mp4,\t\t- change video file name (default=video title).
+    dir=SAVE_DIRECTORY,\t\t- type in a directory for the video to save to (default=current directory).
+    clip=START_AT-END_AT,\t- (seconds) example: clip=0-15.5 (defualt=full video).
+""")
 
-def error_function(msg: str):
-    # Resets style (for simplicity), Makes the string "ERROR: " Red
-    # and turns the actually error message back to regular text.
-    print(f"\n{Style.RESET_ALL}{Back.RED}ERROR:{Back.BLACK} {msg}")
+def error_function(msg: str) -> None:
+    # Resets style (for simplicity), Turns background text red for "ERROR:",
+    # and finally resets background for the error message itself.
+    print(f"\n{Style.RESET_ALL}{Back.RED}ERROR:{Back.RESET} {msg}{Style.RESET_ALL}")
 
 
 def download_video(
@@ -40,8 +42,9 @@ def download_video(
         audio_only: bool, 
         itag: int, 
         file_name: str,
-        dir: str
-    ):
+        dir: str,
+        video_clip: list[float]
+    ) -> None:
     
     try:
         yt_video = YouTube(url)
@@ -54,9 +57,9 @@ def download_video(
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
 
     try:
-        print(f"Title: {yt_video.title}\nViews: {yt_video.views:,}")
-    except urllib.error.URLError:
-        # No internet error handling.
+        print(f"Title: {yt_video.title} \nCreator: {yt_video.author}\nViews: {yt_video.views:,}")
+
+    except urllib.error.URLError: # No internet error handling.
         error_function(msg="You need internet to use this command.")
         return
 
@@ -72,29 +75,52 @@ def download_video(
         else:
             error_function(msg="Unknown input, please try again.")
 
-    # Video downloading, filtering, and file renaming.
+    # Video downloading, filtering, and renaming.
     if (itag != ""):
         yt_video.streams.get_by_itag(itag=itag).download(dir)
-        print("Video Succesfully downloaded.")
 
-        if (file_name != ""):
-            os.rename(yt_video.streams.get_by_itag(itag=itag).default_filename, file_name)
-            print(f"File renamed to \"{file_name}\"")
-        
     elif (audio_only != None):
         yt_video.streams.filter(audio_only=audio_only).download(dir)
 
-        if (file_name != ""):
-            os.rename(yt_video.streams.filter(audio_only=audio_only).default_filename, file_name)
-            print(f"File renamed to \"{file_name}\"")
+    elif (audio_only != None and itag != ""):
+        yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
 
     else:
         yt_video.streams.get_highest_resolution().download(dir)
-        print("Video Succesfully downloaded.")
 
+    print("Video Succesfully downloaded.")
+
+    if (file_name != ""):
+        try:
+            os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
+                    dir + file_name)
+
+        except FileExistsError:
+            error_function(msg=f"\"{file_name}\" already exists, delete file to contuine.")
+            return
+
+        print(f"\nVideo renamed to \"{file_name}\"")
+
+    
+    if (video_clip != []):
         if (file_name != ""):
-            os.rename(yt_video.streams.get_highest_resolution().default_filename, file_name)
-            print(f"File renamed to \"{file_name}\"")
+            video = VideoFileClip(dir + file_name)
+            video = video.subclip(video_clip[0], video_clip[1]) 
+            video.write_videofile(dir + "clipped" + file_name, verbose=False, logger=None)   
+        else:
+            video = VideoFileClip(dir + yt_video.title + ".mp4")
+            video = video.subclip(video_clip[0], video_clip[1]) 
+            video.write_videofile(dir + "clipped" + yt_video.title + ".mp4", verbose=False, logger=None)
+
+            # 'dir + "clipped"' is a temporary solution because of a issue with moviepy,
+            # where os.remove() doesn't work because somewhere is using it so it cannot be deleted.
+            # More information at this github issue: https://github.com/Zulko/moviepy/issues/1819
+
+        print(f"Video clipped down to {video_clip[0]}s-{video_clip[1]}s")
+
+    if (dir != ""):
+        print(f"Video moved to {dir}")
+
 
 if __name__ == "__main__":
     try:
@@ -114,12 +140,11 @@ if __name__ == "__main__":
                 try:
                     arg, result = item.split("=")
 
-                # Becuase Youtube urls have a "=" sign in them we must put this in
-                # to handle for them.
                 except ValueError: 
                     try:
                         arg, result, result2 = item.split("=")
                         result += "=" + result2 
+                        # Becuase Youtube urls have a "=" in them we must put this here to handle it.
                     except Exception:
                         error_function(msg="Unsupported Argument")
 
@@ -140,7 +165,23 @@ if __name__ == "__main__":
                     file_name = result
                 
                 elif (arg.lower() == "dir"):
+                    if (result[-1] != "\\"):
+                        result += "/"
+
                     dir = result
+                
+                elif (arg.lower() == "clip"):
+                    result = result.split("-")
+
+                    for item in result:
+                        try:
+                            item = float(item)
+                        except ValueError:
+                            error_function(msg="Cannot enter letters in clip.")
+                            exit()
+
+
+                        video_clip.append(item)
                 
                 else:
                     error_function(msg=f"{arg} is unknown, do --help for all arguments and commands.")
@@ -150,7 +191,7 @@ if __name__ == "__main__":
 
             download_video(url=url, audio_only=audio_only, 
                            itag=itag, file_name=file_name,
-                           dir=dir)
+                           dir=dir, video_clip=video_clip)
 
     except IndexError as e:
         error_function(msg=f"Please enter a argument.")
