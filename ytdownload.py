@@ -90,7 +90,7 @@ def download_video(
 
     print("Video Succesfully downloaded.")
 
-    if video_clip:
+    if (file_name != ""):
         try:
             os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
                     dir + file_name)
@@ -102,15 +102,15 @@ def download_video(
         print(f"\nVideo renamed to \"{file_name}\"")
 
     
-    if (video_clip != []):
+    if video_clip:
         if (file_name != ""):
             video = VideoFileClip(dir + file_name)
             video = video.subclip(video_clip[0], video_clip[1]) 
-            video.write_videofile(dir + "clipped" + file_name, verbose=False, logger=None)   
+            video.write_videofile(dir + "clipped " + file_name, verbose=False, logger=None)   
         else:
             video = VideoFileClip(dir + yt_video.title + ".mp4")
             video = video.subclip(video_clip[0], video_clip[1]) 
-            video.write_videofile(dir + "clipped" + yt_video.title + ".mp4", verbose=False, logger=None)
+            video.write_videofile(dir + "clipped " + yt_video.title + ".mp4", verbose=False, logger=None)
 
             # 'dir + "clipped"' is a temporary solution because of a issue with moviepy,
             # where os.remove() doesn't work because somewhere is using it so it cannot be deleted.
@@ -180,7 +180,6 @@ if __name__ == "__main__":
                             error_function(msg="Cannot enter letters in clip.")
                             exit()
 
-
                         video_clip.append(item)
                 
                 else:
@@ -193,7 +192,7 @@ if __name__ == "__main__":
                            itag=itag, file_name=file_name,
                            dir=dir, video_clip=video_clip)
 
-    except IndexError as e:
+    except IndexError:
         error_function(msg=f"Please enter a argument.")
 
     if (debug_mode == True):
