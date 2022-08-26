@@ -1,16 +1,16 @@
 from colorama import Fore, Back, Style
-from moviepy.editor import * 
 from pytube import YouTube
 import urllib
 import sys
 import os
+
+# ytdownload by Zacky2613
 
 url = ""
 dir = ""
 itag = ""
 file_name = ""
 audio_only = None # Mp3 (True) or Mp4 (False)
-video_clip = [] 
 debug_mode = False
 
 def help_command():
@@ -28,7 +28,6 @@ Options:
     debug_mode={True|False},\t- Shows debugging information.
     file_name=FILE.mp4,\t\t- change video file name (default=video title).
     dir=SAVE_DIRECTORY,\t\t- type in a directory for the video to save to (default=current directory).
-    clip=START_AT-END_AT,\t- (seconds) example: clip=0-15.5 (defualt=full video).
 """)
 
 def error_function(msg: str) -> None:
@@ -43,7 +42,6 @@ def download_video(
         itag: int, 
         file_name: str,
         dir: str,
-        video_clip: list[float]
     ) -> None:
     
     try:
@@ -58,6 +56,7 @@ def download_video(
 
     try:
         print(f"Title: {yt_video.title} \nCreator: {yt_video.author}\nViews: {yt_video.views:,}")
+        print(f"\nFile Name: \"{file_name}\"\nDirectory: {dir}")
 
     except urllib.error.URLError: # No internet error handling.
         error_function(msg="You need internet to use this command.")
@@ -66,7 +65,7 @@ def download_video(
     while True:
         user_input = input("\nConfirm [y/n]: ")
         if (user_input.lower() == "y" or user_input.lower() == "yes"):
-            print("\nDownloading video...")
+            print("\n[STATUS]: Downloading video.")
             break
 
         elif (user_input.lower() == "n" or user_input.lower() == "no"):
@@ -88,38 +87,23 @@ def download_video(
     else:
         yt_video.streams.get_highest_resolution().download(dir)
 
-    print("Video Succesfully downloaded.")
+    print("[STATUS]: Video succesfully downloaded.")
 
     if (file_name != ""):
         try:
             os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
-                    dir + file_name)
+                      dir + file_name)
 
         except FileExistsError:
             error_function(msg=f"\"{file_name}\" already exists, delete file to contuine.")
             return
 
-        print(f"\nVideo renamed to \"{file_name}\"")
-
-    
-    if video_clip:
-        if (file_name != ""):
-            video = VideoFileClip(dir + file_name)
-            video = video.subclip(video_clip[0], video_clip[1]) 
-            video.write_videofile(dir + "clipped " + file_name, verbose=False, logger=None)   
-        else:
-            video = VideoFileClip(dir + yt_video.title + ".mp4")
-            video = video.subclip(video_clip[0], video_clip[1]) 
-            video.write_videofile(dir + "clipped " + yt_video.title + ".mp4", verbose=False, logger=None)
-
-            # 'dir + "clipped"' is a temporary solution because of a issue with moviepy,
-            # where os.remove() doesn't work because somewhere is using it so it cannot be deleted.
-            # More information at this github issue: https://github.com/Zulko/moviepy/issues/1819
-
-        print(f"Video clipped down to {video_clip[0]}s-{video_clip[1]}s")
+        print(f"\n[STATUS]: File renamed to \"{file_name}\"")
 
     if (dir != ""):
-        print(f"Video moved to {dir}")
+        print(f"[STATUS]: Video saved to dir \"{dir}\"")
+    
+    print("\n[STATUS]: Finished, video ready.")
 
 
 if __name__ == "__main__":
@@ -170,18 +154,6 @@ if __name__ == "__main__":
 
                     dir = result
                 
-                elif (arg.lower() == "clip"):
-                    result = result.split("-")
-
-                    for item in result:
-                        try:
-                            item = float(item)
-                        except ValueError:
-                            error_function(msg="Cannot enter letters in clip.")
-                            exit()
-
-                        video_clip.append(item)
-                
                 else:
                     error_function(msg=f"{arg} is unknown, do --help for all arguments and commands.")
                 
@@ -190,7 +162,7 @@ if __name__ == "__main__":
 
             download_video(url=url, audio_only=audio_only, 
                            itag=itag, file_name=file_name,
-                           dir=dir, video_clip=video_clip)
+                           dir=dir)
 
     except IndexError:
         error_function(msg=f"Please enter a argument.")
