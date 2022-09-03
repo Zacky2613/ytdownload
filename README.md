@@ -10,12 +10,10 @@ The following modules will need to be installed for the program to work (if runn
 # Linux/macOS
 py3 -m pip install colorama
 py3 -m pip install pytube
-py3 -m pip install moviepy
 
 # Windows
 python3 -m pip install colorama
 python3 -m pip install pytube
-python3 -m pip install moviepy
 ```
 
 ## Commands
