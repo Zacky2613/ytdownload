@@ -1,4 +1,4 @@
-from colorama import Fore, Back, Style
+from colorama import Back, Style
 from pytube import YouTube
 import urllib
 import sys
@@ -10,8 +10,9 @@ url = ""
 dir = ""
 itag = ""
 file_name = ""
-audio_only = None # Mp3 (True) or Mp4 (False)
+audio_only = None  # Mp3 (True) or Mp4 (False)
 debug_mode = False
+
 
 def help_command():
     print("""List of commands for command ytdownload:
@@ -23,27 +24,26 @@ Options:
     --streams, [url],\tShows stream information about a url
 
     *url=YOUTUBE_VIDEO_LINK,\t- Youtube video url.
-    audio_only={True|False},\t- audio only video (default=false).
-    itag=ITAG,\t\t\t- select video using itag (get itag info by using --streams).
+    audio_only={True|False},\t- Audio only video (default=false).
+    itag=ITAG,\t\t\t- Select video using itag (--streams for itag).
     debug_mode={True|False},\t- Shows debugging information.
-    file_name=FILE.mp4,\t\t- change video file name (default=video title).
-    dir=SAVE_DIRECTORY,\t\t- type in a directory for the video to save to (default=current directory).
+    file_name=FILE.mp4,\t\t- Change video file name (default=video title).
+    dir=SAVE_DIRECTORY,\t\t- Directory to save video (default=cd).
 """)
 
+
 def error_function(msg: str) -> None:
-    # Resets style (for simplicity), Turns background text red for "ERROR:",
-    # and finally resets background for the error message itself.
     print(f"\n{Style.RESET_ALL}{Back.RED}ERROR:{Back.RESET} {msg}{Style.RESET_ALL}")
 
 
 def download_video(
-        url: str, 
-        audio_only: bool, 
-        itag: int, 
+        url: str,
+        audio_only: bool,
+        itag: int,
         file_name: str,
         dir: str,
-    ) -> None:
-    
+        ) -> None:
+
     try:
         yt_video = YouTube(url)
     except Exception:
@@ -55,10 +55,12 @@ def download_video(
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
 
     try:
-        print(f"Title: {yt_video.title} \nCreator: {yt_video.author}\nViews: {yt_video.views:,}")
+        print(f"Title: {yt_video.title} \nCreator: {yt_video.author}\n")
+        print(f"Views: {yt_video.views:,}")
+
         print(f"\nFile Name: \"{file_name}\"\nDirectory: {dir}")
 
-    except urllib.error.URLError: # No internet error handling.
+    except urllib.error.URLError:  # No internet error handling.
         error_function(msg="You need internet to use this command.")
         return
 
@@ -78,10 +80,10 @@ def download_video(
     if (itag != ""):
         yt_video.streams.get_by_itag(itag=itag).download(dir)
 
-    elif (audio_only != None):
+    elif (audio_only is not None):
         yt_video.streams.filter(audio_only=audio_only).download(dir)
 
-    elif (audio_only != None and itag != ""):
+    elif (audio_only is not None and itag != ""):
         yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
 
     else:
@@ -95,14 +97,14 @@ def download_video(
                       dir + file_name)
 
         except FileExistsError:
-            error_function(msg=f"\"{file_name}\" already exists, delete file to contuine.")
+            error_function(msg=f"\"{file_name}\" exists, delete file to contuine.")
             return
 
         print(f"\n[STATUS]: File renamed to \"{file_name}\"")
 
     if (dir != ""):
         print(f"[STATUS]: Video saved to dir \"{dir}\"")
-    
+
     print("\n[STATUS]: Finished, video ready.")
 
 
@@ -124,50 +126,50 @@ if __name__ == "__main__":
                 try:
                     arg, result = item.split("=")
 
-                except ValueError: 
+                except ValueError:
                     try:
                         arg, result, result2 = item.split("=")
-                        result += "=" + result2 
-                        # Becuase Youtube urls have a "=" in them we must put this here to handle it.
+                        result += "=" + result2
+                        # Becuase Youtube urls have a "=" in them.
                     except Exception:
                         error_function(msg="Unsupported Argument")
 
                 # Argument Handling:
                 if (arg == "url"):
                     url = result
-                
+
                 elif (arg.lower() == "audio_only"):
                     audio_only = bool(result)
-                
+
                 elif (arg.lower() == "itag"):
                     itag = result
-                
-                elif (arg.lower() == "debug_mode"):
+
+                elif (arg.lower() == "--debug"):
                     debug_mode = bool(result)
-                
+
                 elif (arg.lower() == "file_name"):
                     file_name = result
-                
+
                 elif (arg.lower() == "dir"):
                     if (result[-1] != "\\"):
                         result += "/"
 
                     dir = result
-                
-                else:
-                    error_function(msg=f"{arg} is unknown, do --help for all arguments and commands.")
-                
-            if (url == None):
-                error_function(msg="You must enter a link, example: url=LINK_HERE")
 
-            download_video(url=url, audio_only=audio_only, 
+                else:
+                    error_function(msg=f"{arg} is unknown, --help for help.")
+
+            if (url is None):
+                error_function(msg="You must enter a link, e.g url=LINK_HERE")
+
+            download_video(url=url, audio_only=audio_only,
                            itag=itag, file_name=file_name,
                            dir=dir)
 
     except IndexError:
-        error_function(msg=f"Please enter a argument.")
+        error_function(msg="Please enter a argument.")
 
-    if (debug_mode == True):
+    if (debug_mode is True):
         # Used for debugging purposes.
         print(f"\n[ DEBUG: ] \nurl={url} \nitag={itag} \n\
         audio_only={audio_only}\nfile_name={file_name}\n")
