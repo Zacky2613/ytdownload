@@ -1,5 +1,8 @@
 # ytdownload
 
+<!-- Place this tag where you want the button to render. -->
+<a class="github-button" href="https://github.com/Zacky2613" data-color-scheme="no-preference: light; light: light; dark: dark;" data-show-count="true" aria-label="Follow @Zacky2613 on GitHub">Follow @Zacky2613</a>
+
 ytdownload is a terminal based way of downloading youtube videos throught the `ytdownload` command. It is made using python and the pytube module. I would recommened putting the ytdownload.py into PATH for easier use.
 
 ## Installation
