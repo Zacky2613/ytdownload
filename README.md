@@ -33,7 +33,6 @@ Options:
     debug_mode={True|False},    - Shows debugging information.
     file_name=FILE.mp4,         - change video file name (default=video title).
     dir=SAVE_DIRECTORY,         - type in a directory for the video to save to (default=current directory).
-    clip=START_AT-END_AT,       - (seconds) example: clip=0-15.5 (defualt=full video).
 ```
 
 ## Example
