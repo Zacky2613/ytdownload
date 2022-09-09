@@ -1,5 +1,5 @@
 from colorama import Back, Style
-from pytube import YouTube
+from pytube import YouTube, Playlist
 import urllib
 import sys
 import os
@@ -12,6 +12,7 @@ itag = ""
 file_name = ""
 audio_only = None  # Mp3 (True) or Mp4 (False)
 debug_mode = False
+playlist = False
 
 
 def help_command():
@@ -19,9 +20,10 @@ def help_command():
 
 * = required
 Options:
-    --version,\t\tDisplays version of ytdownload
-    --help,\t\tShows all argument options
-    --streams, [url],\tShows stream information about a url
+    --version,\t\t- Displays version of ytdownload.
+    --help,\t\t- Shows all argument options.
+    --streams [url],\t- Shows stream information about a url.
+    --playlist / --pl,\t- Use this for first argument and use a playlist video link to download playlists.
 
     *url=YOUTUBE_VIDEO_LINK,\t- Youtube video url.
     audio_only={True|False},\t- Audio only video (default=false).
@@ -42,10 +44,14 @@ def download_video(
         itag: int,
         file_name: str,
         dir: str,
+        playlist: bool
         ) -> None:
 
     try:
-        yt_video = YouTube(url)
+        if (playlist is False):
+            yt_video = YouTube(url)
+        else:
+            yt_video = Playlist(url)
     except Exception:
         error_function(msg="No url/incorrect youtube url. Please try again")
         return
@@ -55,13 +61,19 @@ def download_video(
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
 
     try:
-        print(f"Title: {yt_video.title} \nCreator: {yt_video.author}\n")
-        print(f"Views: {yt_video.views:,}")
+        if (playlist is False):
+            print(f"Title: {yt_video.title}")
+            print(f"Creator: {yt_video.author}")
+            print(f"Views: {yt_video.views:,}")
+
+        else:
+            print(f"Playlist Title: {yt_video.title}")
+            print(f"Number of videos: {len(yt_video.video_urls)}")
 
         print(f"\nFile Name: \"{file_name}\"\nDirectory: {dir}")
 
     except urllib.error.URLError:  # No internet error handling.
-        error_function(msg="You need internet to use this command.")
+        error_function(msg="You must be connected to internet.")
         return
 
     while True:
@@ -87,7 +99,13 @@ def download_video(
         yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
 
     else:
-        yt_video.streams.get_highest_resolution().download(dir)
+        if (playlist is False):
+            yt_video.streams.get_highest_resolution().download(dir)
+        else:
+            for video in yt_video.videos:
+                video_download = video.streams.get_highest_resolution()
+                video_download.download(dir)
+                print(f"Downloaded {video_download.title}.")
 
     print("[STATUS]: Video succesfully downloaded.")
 
@@ -97,7 +115,7 @@ def download_video(
                       dir + file_name)
 
         except FileExistsError:
-            error_function(msg=f"\"{file_name}\" exists, delete file to contuine.")
+            error_function(msg=f"\"{file_name}\" exists, delete to contuine.")
             return
 
         print(f"\n[STATUS]: File renamed to \"{file_name}\"")
@@ -115,27 +133,47 @@ if __name__ == "__main__":
             help_command()
 
         elif (sys.argv[1] == "--version"):
-            print("v1.0")
+            print("v1.2")
 
         elif (sys.argv[1] == "--streams"):
             yt_videoo = YouTube(sys.argv[2])
             print(yt_videoo.streams)
 
         else:
+            if (sys.argv[1] == "--playlist" or sys.argv[1] == "--pl"):
+                playlist = True
+
             for item in sys.argv[1:]:
+                if (item == "--pl" or item == "--playlist"):
+                    continue
+
                 try:
                     arg, result = item.split("=")
 
                 except ValueError:
-                    try:
-                        arg, result, result2 = item.split("=")
-                        result += "=" + result2
-                        # Becuase Youtube urls have a "=" in them.
-                    except Exception:
-                        error_function(msg="Unsupported Argument")
+                    if (playlist is False):
+                        try:
+                            arg, result, result2 = item.split("=")
+                            result += "=" + result2
+                            # Becuase Youtube urls have a "=" in them.
+                        except Exception:
+                            error_function(msg="Unsupported Argument")
+                            exit()
+
+                    else:
+                        try:
+                            arg, result, result2, result3 = item.split("=")
+                            result += "=" + result2 + "=" + result3
+
+                        except Exception:
+                            error_function(msg="Unsupported Argument")
+                            exit()
+
+                result = result.replace("\"", "")
+                result = result.replace("'", "")
 
                 # Argument Handling:
-                if (arg == "url"):
+                if (arg.lower() == "url"):
                     url = result
 
                 elif (arg.lower() == "audio_only"):
@@ -164,7 +202,7 @@ if __name__ == "__main__":
 
             download_video(url=url, audio_only=audio_only,
                            itag=itag, file_name=file_name,
-                           dir=dir)
+                           dir=dir, playlist=playlist)
 
     except IndexError:
         error_function(msg="Please enter a argument.")
