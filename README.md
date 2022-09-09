@@ -27,11 +27,11 @@ Options:
     --help,             - Shows all argument options.
     --streams [url],    - Shows stream information about a url.
     --playlist / --pl,  -Use this for first argument and use a playlist video link to download playlists.
+    --debug,            - Shows debugging information.
 
     *url=YOUTUBE_VIDEO_LINK,    - Youtube video url.
     audio_only={True|False},    - audio only video (default=false).
     itag=ITAG,                  - select video using itag (get itag info by using --streams).
-    debug_mode={True|False},    - Shows debugging information.
     file_name=FILE.mp4,         - change video file name (default=video title).
     dir=SAVE_DIRECTORY,         - type in a directory for the video to save to (default=current directory).
 ```
