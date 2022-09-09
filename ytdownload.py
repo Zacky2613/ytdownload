@@ -210,4 +210,5 @@ if __name__ == "__main__":
     if (debug_mode is True):
         # Used for debugging purposes.
         print(f"\n[ DEBUG: ] \nurl={url} \nitag={itag} \n\
-        audio_only={audio_only}\nfile_name={file_name}\n")
+        audio_only={audio_only}\nfile_name={file_name}\n\
+        playlist={playlist} \ndir={dir}")
