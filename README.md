@@ -23,9 +23,10 @@ A copy of this can be found in the terminal using the command, `ytdownload --hel
 ```text
 * = required
 Options:
-    --version,          - Displays version of ytdownload
-    --help,             - Shows all argument options
-    --streams [url],    - Shows stream information about a url
+    --version,          - Displays version of ytdownload.
+    --help,             - Shows all argument options.
+    --streams [url],    - Shows stream information about a url.
+    --playlist / --pl,  -Use this for first argument and use a playlist video link to download playlists.
 
     *url=YOUTUBE_VIDEO_LINK,    - Youtube video url.
     audio_only={True|False},    - audio only video (default=false).
