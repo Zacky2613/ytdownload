@@ -1,10 +1,10 @@
 # ytdownload
 
-ytdownload is a terminal based way of downloading youtube videos throught the `ytdownload` command. It is made using python and the pytube module. I would recommened putting the ytdownload.py into PATH for easier use.
+ytdownload is a tool to use download youtube videos and playlists using the command line. Made using python and the pytube module. I'd recommended putting into your PATH for easier use.
 
 ## Installation
 
-The following modules will need to be installed for the program to work (if running the .py file):
+You will need to have Python 3.6+ and install the following modules:
 
 ```text
 # Linux/macOS
