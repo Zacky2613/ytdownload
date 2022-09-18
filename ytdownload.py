@@ -1,5 +1,6 @@
 from colorama import Back, Style
 from pytube import YouTube, Playlist
+from pytube.cli import on_progress
 import urllib
 import sys
 import os
@@ -23,7 +24,7 @@ Options:
     --version,\t\t- Displays version of ytdownload.
     --help,\t\t- Shows all argument options.
     --streams [url],\t- Shows stream information about a url.
-    --playlist / --pl,\t- Use this for first argument and use a playlist video link to download playlists.
+    --playlist / --pl,\t- Use for first arg to download playlists.
     --debug,\t\t- Shows debugging information.
 
 
@@ -36,7 +37,8 @@ Options:
 
 
 def error_function(msg: str) -> None:
-    print(f"\n{Style.RESET_ALL}{Back.RED}ERROR:{Back.RESET} {msg}{Style.RESET_ALL}")
+    print(f"\n{Style.RESET_ALL}{Back.RED}ERROR:{Back.RESET} {msg}\
+        {Style.RESET_ALL}")
 
 
 def download_video(
@@ -50,7 +52,7 @@ def download_video(
 
     try:
         if (playlist is False):
-            yt_video = YouTube(url)
+            yt_video = YouTube(url, on_progress_callback=on_progress)
         else:
             yt_video = Playlist(url)
     except Exception:
@@ -79,6 +81,7 @@ def download_video(
 
     while True:
         user_input = input("\nConfirm [y/n]: ")
+
         if (user_input.lower() == "y" or user_input.lower() == "yes"):
             print("\n[STATUS]: Downloading video.")
             break
@@ -90,23 +93,28 @@ def download_video(
             error_function(msg="Unknown input, please try again.")
 
     # Video downloading, filtering, and renaming.
-    if (itag != ""):
-        yt_video.streams.get_by_itag(itag=itag).download(dir)
+    try:
+        if (itag != ""):
+            yt_video.streams.get_by_itag(itag=itag).download(dir)
 
-    elif (audio_only is not None):
-        yt_video.streams.filter(audio_only=audio_only).download(dir)
+        elif (audio_only is not None):
+            yt_video.streams.get_audio_only(audio_only).download(dir)
 
-    elif (audio_only is not None and itag != ""):
-        yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
+        elif (audio_only is not None and itag != ""):
+            yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
 
-    else:
-        if (playlist is False):
-            yt_video.streams.get_highest_resolution().download(dir)
         else:
-            for video in yt_video.videos:
-                video_download = video.streams.get_highest_resolution()
-                video_download.download(dir)
-                print(f"Downloaded {video_download.title}.")
+            if (playlist is False):
+                yt_video.streams.get_highest_resolution().download(dir)
+            else:
+                for video in yt_video.videos:
+                    video_download = video.streams.get_highest_resolution()
+                    video_download.download(dir)
+                    print(f"\nDownloaded {video_download.title}.")
+
+    except AttributeError:  # If video is not avaiable
+        error_function("Video(s) cannot be found, --streams to get by itag")
+        return
 
     print("[STATUS]: Video succesfully downloaded.")
 
