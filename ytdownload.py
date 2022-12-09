@@ -21,10 +21,10 @@ def help_command():
 
 * = required
 Options:
-    --version,\t\t- Displays version of ytdownload.
+    --version / -v,\t- Displays version of ytdownload.
     --help,\t\t- Shows all argument options.
     --streams [url],\t- Shows stream information about a url.
-    --playlist / --pl,\t- Use for first arg to download playlists.
+    --playlist / -pl,\t- Use for first arg to download playlists.
     --debug,\t\t- Shows debugging information.
 
 
@@ -141,7 +141,7 @@ if __name__ == "__main__":
         if (sys.argv[1] == "--help"):
             help_command()
 
-        elif (sys.argv[1] == "--version"):
+        elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
             print("v1.2")
 
         elif (sys.argv[1] == "--streams"):
@@ -149,7 +149,7 @@ if __name__ == "__main__":
             print(yt_videoo.streams)
 
         else:
-            if (sys.argv[1] == "--playlist" or sys.argv[1] == "--pl"):
+            if (sys.argv[1] == "--playlist" or sys.argv[1] == "-pl"):
                 playlist = True
 
             for item in sys.argv[1:]:
