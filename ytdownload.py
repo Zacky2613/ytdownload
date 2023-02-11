@@ -106,7 +106,9 @@ def download_video(
 
     # User confirmation input
     while True:
-        print("\n[NOTE]: Playlists will create a folder to store videos into")
+        if (Playlist is True):
+            print("\n[NOTE]: Playlists will create a folder to store videos into")
+
         user_input = input("Confirm [y/n]: ")
 
         if (user_input.lower() == "y" or user_input.lower() == "yes"):
