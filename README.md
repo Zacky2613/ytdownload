@@ -1,22 +1,24 @@
 # ytdownload
 
-ytdownload is a tool to use download youtube videos and playlists using the command line. Made using python and the pytube module. I'd recommended putting into your PATH for easier use.
+A command line tool which can download youtube videos and playlists without the hassal of dealing with websites.
+
+## Features
+
+ytdownload has a whole range of features including:
+
+- Youtube video downloading
+- Youtube Playlist downloading
+- Commands to change the file name
+- Commands to change where the video(s) are saved
+- Confirmation page showing information about the vidoe to know if you choose the right one.
+- If you want videos that are just the audio
+- And other features like itags so you can choose which video you want exactly to download.
 
 ## Installation
 
-You will need to have Python 3.6+ and install the following modules:
+You'll need to have Python 3.6+ and run the command `pip install -r requirements.txt`
 
-```text
-# Linux/macOS
-py3 -m pip install colorama
-py3 -m pip install pytube
-
-# Windows
-python3 -m pip install colorama
-python3 -m pip install pytube
-```
-
-## Commands
+## Commands/Arguments
 
 A copy of this can be found in the terminal using the command, `ytdownload --help`.
 
@@ -36,8 +38,11 @@ Options:
     dir=SAVE_DIRECTORY,         - type in a directory for the video to save to (default=current directory).
 ```
 
-## Example
+## Examples
 
-```text
-ytdownload url=https://www.youtube.com/watch?v=ExwqNreocpg file_name=video.mp4
-```
+This will download a video and rename it too "video.mp4"
+
+`ytdownload url=https://www.youtube.com/watch?v=ExwqNreocpg file_name=video.mp4`
+
+This will download a playlist, folder name as "playlist_videos", and set the directory as the parent folder.
+`ytdownload --Playlist url=https://www.youtube.com/playlist?list=PL38p7pccpLcTxGhBKcy9zCjD61I0dN2PT file_name=playlist_videos dir=../`
