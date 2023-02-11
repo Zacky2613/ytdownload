@@ -14,7 +14,11 @@ file_name = ""
 audio_only = None  # Mp3 (True) or Mp4 (False)
 debug_mode = False
 playlist = False
-banned_filename_characters = ['&', '"', '?', '<', '>', '#', '{', '}', '%', '~', '/', '\\']
+
+banned_filename_characters = [
+    '&', '"', '?', '<', '>', '#',
+    '{', '}', '%', '~', '/', '\\'
+]
 
 
 def help_command():
@@ -56,6 +60,7 @@ def download_video(
             yt_video = YouTube(url, on_progress_callback=on_progress)
         else:
             yt_video = Playlist(url)
+
     except Exception:
         error_function(msg="No url/incorrect youtube url. Please try again")
         return
@@ -82,26 +87,26 @@ def download_video(
                 title_name = title_name.replace(symbol, "")
 
             # Becuase Playlist files get put into a folder.
-            if (Playlist == False):
+            if (Playlist is False):
                 print(f"\nFile Name: \"{title_name}.mp4\" ")
             else:
                 print(f"\nFolder Name: \"{title_name}\" ")
 
         else:
-            if (Playlist == False):
+            if (Playlist is False):
                 print(f"\nFile Name: \"{file_name}\".mp4")
             else:
                 print(f"\nFolder Name: \"{file_name}\"")
-        
+
         print(f"Directory: {dir}")
 
     except urllib.error.URLError:  # No internet error handling.
         error_function(msg="You must be connected to internet.")
         return
 
-    # User confirmation input 
+    # User confirmation input
     while True:
-        print("\n[NOTE]: Becuase this is a playlist a folder will be created to store the videos.")
+        print("\n[NOTE]: Playlists will create a folder to store videos into")
         user_input = input("Confirm [y/n]: ")
 
         if (user_input.lower() == "y" or user_input.lower() == "yes"):
@@ -150,7 +155,7 @@ def download_video(
     print("[STATUS]: Video succesfully downloaded.")
 
     # Changing the downloaded video's filename.
-    if (file_name != "" and playlist == False):
+    if (file_name != "" and playlist is False):
         try:
             os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
                       dir + file_name)
@@ -171,7 +176,7 @@ if __name__ == "__main__":
         # "--" Command handling
         if (sys.argv[1] == "--help"):
             help_command()
-            
+
         elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
             print("v1.2.1")
 
@@ -214,7 +219,7 @@ if __name__ == "__main__":
                             error_function(msg="Unsupported Argument")
                             exit()
 
-                
+                # No clue why these are hear, but too scared to remove them.
                 result = result.replace("\"", "")
                 result = result.replace("'", "")
 
@@ -251,8 +256,8 @@ if __name__ == "__main__":
         error_function(msg="Please enter a argument.")
 
     if (debug_mode is True):
-        # Used for debugging purposes.
-        print(f"\n[ DEBUG: ]")
+        # Used for debugging purposes. Do --debug to display this.
+        print("\n[ DEBUG: ]")
         print(f"url={url}")
         print(f"itag={itag}")
         print(f"audio_only={audio_only}")
