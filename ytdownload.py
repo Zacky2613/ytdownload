@@ -14,6 +14,7 @@ file_name = ""
 audio_only = None  # Mp3 (True) or Mp4 (False)
 debug_mode = False
 playlist = False
+banned_filename_characters = ['&', '"', '?', '<', '>', '#', '{', '}', '%', '~', '/', '\\']
 
 
 def help_command():
@@ -73,7 +74,17 @@ def download_video(
             print(f"Playlist Title: {yt_video.title}")
             print(f"Number of videos: {len(yt_video.video_urls)}")
 
-        print(f"\nFile Name: \"{file_name}\"\nDirectory: {dir}")
+        if (file_name == ""):
+            # This is because Windows bans some characters being in a filename
+            title_name = yt_video.title
+            for symbol in banned_filename_characters:
+                title_name = title_name.replace(symbol, "")
+
+            print(f"\nFile Name: \"{title_name}.mp4\" ")
+        else:
+            print(f"\nFile Name: \"{file_name}\"")
+
+        print(f"Directory: {dir}")
 
     except urllib.error.URLError:  # No internet error handling.
         error_function(msg="You must be connected to internet.")
@@ -132,15 +143,14 @@ def download_video(
     if (dir != ""):
         print(f"[STATUS]: Video saved to dir \"{dir}\"")
 
-    print("\n[STATUS]: Finished, video ready.")
-
 
 if __name__ == "__main__":
     try:
         # Command handling
         if (sys.argv[1] == "--help"):
             help_command()
-
+            os.system("pause")
+            
         elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
             print("v1.2")
 
@@ -160,7 +170,11 @@ if __name__ == "__main__":
                     arg, result = item.split("=")
 
                 except ValueError:
-                    if (playlist is False):
+                    if (item == "--debug"):
+                        debug_mode = True
+                        continue
+
+                    elif (playlist is False):
                         try:
                             arg, result, result2 = item.split("=")
                             result += "=" + result2
@@ -191,9 +205,6 @@ if __name__ == "__main__":
                 elif (arg.lower() == "itag"):
                     itag = result
 
-                elif (arg.lower() == "--debug"):
-                    debug_mode = bool(result)
-
                 elif (arg.lower() == "file_name"):
                     file_name = result
 
@@ -218,6 +229,10 @@ if __name__ == "__main__":
 
     if (debug_mode is True):
         # Used for debugging purposes.
-        print(f"\n[ DEBUG: ] \nurl={url} \nitag={itag} \n\
-        audio_only={audio_only}\nfile_name={file_name}\n\
-        playlist={playlist} \ndir={dir}")
+        print(f"\n[ DEBUG: ]")
+        print(f"url={url}")
+        print(f"itag={itag}")
+        print(f"audio_only={audio_only}")
+        print(f"file_name={file_name}")
+        print(f"playlist={playlist}")
+        print(f"dir={dir}")
