@@ -60,7 +60,8 @@ def download_video(
         error_function(msg="No url/incorrect youtube url. Please try again")
         return
 
-    # User input confirmation:
+    # Confirmation page, showing information about the video/playlist-
+    # and how they want to store it.
     print(Style.RESET_ALL)
     print(f"{Back.LIGHTBLUE_EX}[ CONFIRMATION ]:{Style.RESET_ALL}")
 
@@ -68,7 +69,7 @@ def download_video(
         if (playlist is False):
             print(f"Title: {yt_video.title}")
             print(f"Creator: {yt_video.author}")
-            print(f"Views: {yt_video.views:,}")
+            print(f"Views: {yt_video.views}")
 
         else:
             print(f"Playlist Title: {yt_video.title}")
@@ -80,18 +81,28 @@ def download_video(
             for symbol in banned_filename_characters:
                 title_name = title_name.replace(symbol, "")
 
-            print(f"\nFile Name: \"{title_name}.mp4\" ")
-        else:
-            print(f"\nFile Name: \"{file_name}\"")
+            # Becuase Playlist files get put into a folder.
+            if (Playlist == False):
+                print(f"\nFile Name: \"{title_name}.mp4\" ")
+            else:
+                print(f"\nFolder Name: \"{title_name}\" ")
 
+        else:
+            if (Playlist == False):
+                print(f"\nFile Name: \"{file_name}\".mp4")
+            else:
+                print(f"\nFolder Name: \"{file_name}\"")
+        
         print(f"Directory: {dir}")
 
     except urllib.error.URLError:  # No internet error handling.
         error_function(msg="You must be connected to internet.")
         return
 
+    # User confirmation input 
     while True:
-        user_input = input("\nConfirm [y/n]: ")
+        print("\n[NOTE]: Becuase this is a playlist a folder will be created to store the videos.")
+        user_input = input("Confirm [y/n]: ")
 
         if (user_input.lower() == "y" or user_input.lower() == "yes"):
             print("\n[STATUS]: Downloading video.")
@@ -105,7 +116,7 @@ def download_video(
 
     # Video downloading, filtering, and renaming.
     try:
-        if (itag != ""):
+        if (itag != ""):  # itag downloading.
             yt_video.streams.get_by_itag(itag=itag).download(dir)
 
         elif (audio_only is not None):
@@ -114,14 +125,23 @@ def download_video(
         elif (audio_only is not None and itag != ""):
             yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
 
+        # Downloading:
         else:
             if (playlist is False):
                 yt_video.streams.get_highest_resolution().download(dir)
             else:
+                # Creates a folder and downloads into the folder.
+                if (file_name == ""):
+                    os.system(f'mkdir "{yt_video.title}"')
+                    dir += f'{yt_video.title}'
+                else:
+                    os.system(f'mkdir "{file_name}"')
+                    dir += f'{file_name}'
+
                 for video in yt_video.videos:
                     video_download = video.streams.get_highest_resolution()
                     video_download.download(dir)
-                    print(f"\nDownloaded {video_download.title}.")
+                    print(f"Downloaded {video_download.title}.")
 
     except AttributeError:  # If video is not avaiable
         error_function("Video(s) cannot be found, --streams to get by itag")
@@ -129,7 +149,8 @@ def download_video(
 
     print("[STATUS]: Video succesfully downloaded.")
 
-    if (file_name != ""):
+    # Changing the downloaded video's filename.
+    if (file_name != "" and playlist == False):
         try:
             os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
                       dir + file_name)
@@ -140,30 +161,31 @@ def download_video(
 
         print(f"\n[STATUS]: File renamed to \"{file_name}\"")
 
+    # Confirming where the videos were saved.
     if (dir != ""):
         print(f"[STATUS]: Video saved to dir \"{dir}\"")
 
 
 if __name__ == "__main__":
     try:
-        # Command handling
+        # "--" Command handling
         if (sys.argv[1] == "--help"):
             help_command()
-            os.system("pause")
             
         elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
-            print("v1.2")
+            print("v1.2.1")
 
         elif (sys.argv[1] == "--streams"):
             yt_videoo = YouTube(sys.argv[2])
             print(yt_videoo.streams)
 
         else:
+            # Becuase --playlist takes in other commands, it's excluded from the other -- commands.
             if (sys.argv[1] == "--playlist" or sys.argv[1] == "-pl"):
                 playlist = True
 
             for item in sys.argv[1:]:
-                if (item == "--pl" or item == "--playlist"):
+                if (item == "-pl" or item == "--playlist"):
                     continue
 
                 try:
@@ -185,17 +207,18 @@ if __name__ == "__main__":
 
                     else:
                         try:
-                            arg, result, result2, result3 = item.split("=")
-                            result += "=" + result2 + "=" + result3
+                            arg, result, result2 = item.split("=")
+                            result += "=" + result2
 
                         except Exception:
                             error_function(msg="Unsupported Argument")
                             exit()
 
+                
                 result = result.replace("\"", "")
                 result = result.replace("'", "")
 
-                # Argument Handling:
+                # Regular command handling
                 if (arg.lower() == "url"):
                     url = result
 
