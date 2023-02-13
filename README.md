@@ -23,19 +23,23 @@ You'll need to have Python 3.6+ and run the command `pip install -r requirements
 A copy of this can be found in the terminal using the command, `ytdownload --help`.
 
 ```text
-* = required
-Options:
-    --version,          - Displays version of ytdownload.
-    --help,             - Shows all argument options.
-    --streams [url],    - Shows stream information about a url.
-    --playlist / --pl,  -Use this for first argument and use a playlist video link to download playlists.
-    --debug,            - Shows debugging information.
+* = requried
+DOWNLOAD AND SAVING:
+    *url=[video_url]: The Youtube url to download the video.
+    dir=[dir]: The directory to save the video(s) too. (e.g: dir=./yt-videos)
+    file_name=[NAME].mp4: When download a video and not a playlist rename the file name after it's done
+    itag=[ITAG]: Download videos using itags, itags are found in --streams.
+    audio_only=[True|False]: Output video as just audio.
 
-    *url=YOUTUBE_VIDEO_LINK,    - Youtube video url.
-    audio_only={True|False},    - audio only video (default=false).
-    itag=ITAG,                  - select video using itag (get itag info by using --streams).
-    file_name=FILE.mp4,         - change video file name (default=video title).
-    dir=SAVE_DIRECTORY,         - type in a directory for the video to save to (default=current directory).
+    [PLAYLISTS]:
+        --playlist/-pl: Tells the program you're download a playlist, wont download without this argument.
+
+INFORMATION:
+    --debug: Shows debugging information.
+    --help: What you're reading, shows information on all commands.
+    --version/-v: Displays current version of the program.
+    --streams: enter the url argument aswell with this command. Shows information about every possible download.
+
 ```
 
 ## Examples

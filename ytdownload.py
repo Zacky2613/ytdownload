@@ -22,22 +22,25 @@ banned_filename_characters = [
 
 
 def help_command():
-    print("""List of commands for command ytdownload:
+    print("""List of commands for command ytdownload v1.2.2:
 
-* = required
-Options:
-    --version / -v,\t- Displays version of ytdownload.
-    --help,\t\t- Shows all argument options.
-    --streams [url],\t- Shows stream information about a url.
-    --playlist / -pl,\t- Use for first arg to download playlists.
-    --debug,\t\t- Shows debugging information.
+* = requried
+DOWNLOAD AND SAVING:
+    *url=[video_url]: The Youtube url to download the video.
+    dir=[dir]: The directory to save the video(s) too. (e.g: dir=./yt-videos)
+    file_name=[NAME].mp4: When download a video and not a playlist rename the file name after it's done
+    itag=[ITAG]: Download videos using itags, itags are found in --streams.
+    audio_only=[True|False]: Output video as just audio.
 
+    [PLAYLISTS]:
+        --playlist/-pl: Tells the program you're download a playlist, wont download without this argument.
 
-    *url=YOUTUBE_VIDEO_LINK,\t- Youtube video url.
-    audio_only={True|False},\t- Audio only video (default=false).
-    itag=ITAG,\t\t\t- Select video using itag (--streams for itag).
-    file_name=FILE.mp4,\t\t- Change video file name (default=video title).
-    dir=SAVE_DIRECTORY,\t\t- Directory to save video (default=cd).
+INFORMATION:
+    --debug: Shows debugging information.
+    --help: What you're reading, shows information on all commands.
+    --version/-v: Displays current version of the program.
+    --streams: enter the url argument aswell with this command. Shows information about every possible download.
+
 """)
 
 
@@ -180,7 +183,7 @@ if __name__ == "__main__":
             help_command()
 
         elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
-            print("v1.2.1")
+            print("v1.2.2")
 
         elif (sys.argv[1] == "--streams"):
             yt_videoo = YouTube(sys.argv[2])
