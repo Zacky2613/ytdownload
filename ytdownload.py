@@ -124,7 +124,7 @@ def download_video(
         else:
             error_function(msg="Unknown input, please try again.")
 
-    # Video downloading, filtering, and renaming.
+    # Video downloading, filtering, and renaming section.
     try:
         if (itag != ""):  # itag downloading.
             yt_video.streams.get_by_itag(itag=itag).download(dir)
@@ -135,7 +135,7 @@ def download_video(
         elif (audio_only is not None and itag != ""):
             yt_video.streams.filter(audio_only=audio_only, itag=itag).download(dir)
 
-        # Downloading:
+        # Playlist/video downloading section
         else:
             if (playlist is False):
                 yt_video.streams.get_highest_resolution().download(dir)
@@ -154,7 +154,7 @@ def download_video(
                     print(f"Downloaded {video_download.title}.")
 
     except AttributeError:  # If video is not avaiable
-        error_function("Video(s) cannot be found, --streams to get by itag")
+        error_function("Video(s) cannot be found, --streams to download by itag")
         return
 
     print("[STATUS]: Video succesfully downloaded.")
@@ -186,8 +186,8 @@ if __name__ == "__main__":
             print("v1.2.2")
 
         elif (sys.argv[1] == "--streams"):
-            yt_videoo = YouTube(sys.argv[2])
-            print(yt_videoo.streams)
+            video_streams = YouTube(sys.argv[2])
+            print(video_streams.streams)
 
         else:
             # Becuase --playlist takes in other commands, it's excluded from the other -- commands.
