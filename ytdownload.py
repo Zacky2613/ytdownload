@@ -1,6 +1,7 @@
 from colorama import Back, Style
 from pytube import YouTube, Playlist
 from pytube.cli import on_progress
+import pytube
 import urllib
 import sys
 import os
@@ -123,6 +124,7 @@ def download_video(
             return
         else:
             error_function(msg="Unknown input, please try again.")
+            return
 
     # Video downloading, filtering, and renaming section.
     try:
@@ -165,7 +167,7 @@ def download_video(
             os.rename(dir + yt_video.streams.get_highest_resolution().default_filename,
                       dir + file_name)
 
-        except FileExistsError:
+        except FileExistsError: 
             error_function(msg=f"\"{file_name}\" exists, delete to contuine.")
             return
 
@@ -183,11 +185,14 @@ if __name__ == "__main__":
             help_command()
 
         elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
-            print("v1.2.2")
+            print("v1.2.3")
 
         elif (sys.argv[1] == "--streams"):
-            video_streams = YouTube(sys.argv[2])
-            print(video_streams.streams)
+            try:
+                video_streams = YouTube(sys.argv[2])
+                print(video_streams.streams)
+            except pytube.exceptions.RegexMatchError:
+                error_function(msg="Invalid url. Use the format: --streams url (with no url=)")
 
         else:
             # Becuase --playlist takes in other commands, it's excluded from the other -- commands.
@@ -249,6 +254,7 @@ if __name__ == "__main__":
 
                 else:
                     error_function(msg=f"{arg} is unknown, --help for help.")
+                    break
 
             if (url is None):
                 error_function(msg="You must enter a link, e.g url=LINK_HERE")
