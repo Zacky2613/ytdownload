@@ -185,7 +185,7 @@ if __name__ == "__main__":
             help_command()
 
         elif (sys.argv[1] == "--version" or sys.argv[1] == "-v"):
-            print("v1.2.3")
+            print("v1.2.2")
 
         elif (sys.argv[1] == "--streams"):
             try:
