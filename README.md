@@ -6,10 +6,8 @@ A command line tool which can download youtube videos and playlists without the 
 
 ytdownload has a whole range of features including:
 
-- Youtube video downloading
-- Youtube Playlist downloading
-- Commands to change the file name
-- Commands to change where the video(s) are saved
+- Youtube Video, Shorts, and Playlist downloading
+- Arguments to change the filename and save dir
 - Confirmation page showing information about the vidoe to know if you choose the right one.
 - If you want videos that are just the audio
 - And other features like itags so you can choose which video you want exactly to download.
